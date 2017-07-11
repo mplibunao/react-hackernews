@@ -29,8 +29,7 @@ function isSearched(searchTerm){
 */ 
 
 // Higher Order function
-const isSearched = (searchTerm) => (item) =>
-  !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
+//const isSearched = (searchTerm) => (item) => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
 
 
 
@@ -45,12 +44,23 @@ class App extends Component {
 
     /*
       The function is bound to the class and thus becomes a class method
-      Need to bind class methods in the constructor; Binds `this` to class
+      Need to bind class methods in the constructor; Binds `this` to class;
+      By default, `this` inside elements point to a function not the class;
+      Problem seems to arise when you pass these functions down to child components (this === undefined)
+      This is a better alternative to calling `this.onDismiss` inside an arrow function since an arrow function is made every
+        render which pile up and force the garbage collection to clean them (expensive)
     */
     this.setSearchTopStories = this.setSearchTopStories.bind(this);
     this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
+    this.onSearchSubmit = this.onSearchSubmit.bind(this);
+  }
+
+  onSearchSubmit(event){
+    const { searchTerm } = this.state;
+    this.fetchSearchTopStories(searchTerm);
+    event.preventDefault();
   }
 
   setSearchTopStories(result){
@@ -88,13 +98,7 @@ class App extends Component {
   }
 
   render() {
-    //console.log(this.state);
     const { searchTerm, result } = this.state;
-
-    // Don't try to render the elements during initial load or if API request fails
-    if (!result){
-      return null;
-    }
 
     return (
       <div className="page">
@@ -102,15 +106,19 @@ class App extends Component {
           <Search
             value={searchTerm}
             onChange={this.onSearchChange}
+            onSubmit={this.onSearchSubmit}
           >
             Search
           </Search>
         </div>
+        {/* Same as using ternary operator but much more confusing lol
+        Like ||, starts with left expression but checks for false (not true)*/}
+        { result &&
           <Table
             list={result.hits}
-            pattern={searchTerm}
             onDismiss={this.onDismiss}
           />
+        }  
       </div>
     );
   }
@@ -121,19 +129,27 @@ class App extends Component {
   In this case, this element tree is considered as one
   If you assign the props values to variable inside the function, that's more than one expression
 */
-const Search = ({value, onChange, children}) =>
-  <form>
+const Search = ({
+  value,
+  onChange,
+  onSubmit,
+  children
+}) =>
+  <form onSubmit={onSubmit}>
     {children} <input
       type="text"
       onChange={onChange}
       // set the value so the element doesn't handle its own state (uncontrolled components)
       value={value}
     />
+    <button type="submit">
+      {children}
+    </button>
   </form>
 
-const Table = ({ list, pattern, onDismiss }) =>
+const Table = ({ list, onDismiss }) =>
 <div className="table">
-  { list.filter(isSearched(pattern)).map( item =>
+  { list.map( item =>
     <div key={item.objectID} className="table-row">
       <span style={{ width: '40%' }}>
         <a href={item.url}>{item.title}</a>
