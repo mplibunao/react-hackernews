@@ -71,8 +71,15 @@ class App extends Component {
   }
 
   onDismiss(id){
-    const newList = this.state.list.filter(item => item.objectID !== id);
-    this.setState({list: newList});
+    const isNotId = item => item.objectID !== id;
+    const updatedHits = this.state.result.hits.filter(isNotId);
+    this.setState({
+      // Copies this state.result then overwrites that particularly the hits property
+      //result: Object.assign({}, this.state.result, {hits: updatedHits})
+      
+      // I knew about the plans for ES7 Object spread/rest operator but didn't know people were using it already :o
+      result: { ...this.state.result, hits: updatedHits }
+    });
   }
 
   // Pass synthetic event to class method to access the event payload
@@ -81,9 +88,10 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state);
+    //console.log(this.state);
     const { searchTerm, result } = this.state;
 
+    // Don't try to render the elements during initial load or if API request fails
     if (!result){
       return null;
     }
@@ -103,7 +111,6 @@ class App extends Component {
             pattern={searchTerm}
             onDismiss={this.onDismiss}
           />
-        
       </div>
     );
   }
