@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
-import App, { Search, Button, Table} from './App';
+import App, { Search, Button, Table, Loading } from './App';
 
 describe('App', ()=>{
 
@@ -57,6 +57,23 @@ describe('Button', ()=>{
   test('snapshots', ()=>{
     const component = renderer.create(
       <Button>Give Me More</Button>
+    );
+    let tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+});
+
+describe('Loading', ()=>{
+  
+  it('renders', ()=>{
+    const div = document.createElement('div');
+    ReactDOM.render(<Loading />, div);
+  });
+
+  test('snapshots', ()=>{
+    const component = renderer.create(
+      <Loading />
     );
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();

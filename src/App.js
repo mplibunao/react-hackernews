@@ -45,6 +45,7 @@ class App extends Component {
       results: null,
       searchKey: '',
       searchTerm: DEFAULT_QUERY,
+      isLoading: false,
     };
 
     /*
@@ -91,11 +92,14 @@ class App extends Component {
         ...results,
         // concat at the end of the map the latest results
         [searchKey]: { hits: updatedHits, page}
-      }
+      },
+      isLoading: false,
     });
   }
 
   fetchSearchTopStories(searchTerm, page){
+    this.setState({ isLoading: true});
+
     fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(response => response.json())
       .then(result => this.setSearchTopStories(result))
@@ -129,7 +133,7 @@ class App extends Component {
   }
 
   render() {
-    const { searchTerm, results, searchKey } = this.state;
+    const { searchTerm, results, searchKey, isLoading } = this.state;
     const page = (results && results[searchKey] && results[searchKey].page) || 0;
     const list = (results && results[searchKey] && results[searchKey].hits) || [];
 
@@ -144,16 +148,16 @@ class App extends Component {
             Search
           </Search>
         </div>
-        {/* Same as using ternary operator but much more confusing lol
-        Like ||, starts with left expression but checks for false (not true)*/}
           <Table
             list={list}
             onDismiss={this.onDismiss}
           />
           <div className="interactions">
+            { isLoading ? <Loading /> :
             <Button onClick={()=> this.fetchSearchTopStories(searchKey, page + 1)}>
               More
             </Button>
+            }
           </div>  
       </div>
     );
@@ -265,6 +269,9 @@ Button.PropTypes = {
 Button.defaultProps = {
   className: '',
 };
+
+const Loading = ()=>
+  <i className="fa fa-spinner fa-spin"></i>
 
 export default App;
 
