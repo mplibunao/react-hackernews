@@ -166,23 +166,37 @@ class App extends Component {
   In this case, this element tree is considered as one
   If you assign the props values to variable inside the function, that's more than one expression
 */
-const Search = ({
-  value,
-  onChange,
-  onSubmit,
-  children
-}) =>
-  <form onSubmit={onSubmit}>
-    {children} <input
-      type="text"
-      onChange={onChange}
-      // set the value so the element doesn't handle its own state (uncontrolled components)
-      value={value}
-    />
-    <button type="submit">
-      {children}
-    </button>
-  </form>
+class Search extends Component{
+
+  // Focus on the search input box upon initial rendering
+  componentDidMount(){
+    this.input.focus();
+  }
+
+  render() {
+    const {
+      value,
+      onChange,
+      onSubmit,
+      children
+    } = this.props;
+    
+    return(
+      <form onSubmit={onSubmit}>
+        {children} <input
+          type="text"
+          onChange={onChange}
+          // set the value so the element doesn't handle its own state (uncontrolled components)
+          value={value}
+          ref={(node) => {this.input = node;}}
+        />
+        <button type="submit">
+          {children}
+        </button>
+      </form>
+    );
+  }
+}
 
 Search.PropTypes = {
   onSubmit: PropTypes.func.isRequired,
