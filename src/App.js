@@ -41,7 +41,8 @@ class App extends Component {
     super(props);
 
     this.state = {
-      result: null,
+      results: null,
+      searchKey: '',
       searchTerm: DEFAULT_QUERY,
     };
 
@@ -53,6 +54,7 @@ class App extends Component {
       This is a better alternative to calling `this.onDismiss` inside an arrow function since an arrow function is made every
         render which pile up and force the garbage collection to clean them (expensive)
     */
+    this.needsToSearchTopStories = this.needsToSearchTopStories.bind(this);
     this.setSearchTopStories = this.setSearchTopStories.bind(this);
     this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
@@ -60,20 +62,35 @@ class App extends Component {
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
   }
 
+  needsToSearchTopStories(searchTerm){
+    return !this.state.results[searchTerm];
+  }
+
   onSearchSubmit(event){
     const { searchTerm } = this.state;
-    this.fetchSearchTopStories(searchTerm, DEFAULT_PAGE);
+    this.setState({searchKey: searchTerm});
+    // If false, we don't fetch data and we just rerender (because of setState) which loads the right data because of searchKey
+    if (this.needsToSearchTopStories(searchTerm)){
+      this.fetchSearchTopStories(searchTerm, DEFAULT_PAGE);
+    }
+    
     event.preventDefault();
   }
 
   // Concatenate recently fetched hits with previous hits
   setSearchTopStories({hits, page}){
-
-    const oldHits = page !== 0 ? this.state.result.hits : [];
+    const { searchKey, results } = this.state;
+    // && acts as a gate to stop result from accessing non-existent searchKey index
+    const oldHits = results && results[searchKey]
+      ? results[searchKey].hits
+      : [];
     const updatedHits = [...oldHits, ...hits];
     this.setState({
-      // Only store the hits and page part of the json
-      result: { hits: updatedHits, page}
+      results: {
+        ...results,
+        // concat at the end of the map the latest results
+        [searchKey]: { hits: updatedHits, page}
+      }
     });
   }
 
@@ -87,18 +104,21 @@ class App extends Component {
   // Make API Request after initial rendering of component
   componentDidMount(){
     const { searchTerm } = this.state;
+    this.setState({searchKey: searchTerm});
     this.fetchSearchTopStories(searchTerm, DEFAULT_PAGE);
   }
 
   onDismiss(id){
+    const { searchKey, results } = this.state;
+    const { hits, page } = results[searchKey];
+    // Filter function
     const isNotId = item => item.objectID !== id;
-    const updatedHits = this.state.result.hits.filter(isNotId);
+    const updatedHits = hits.filter(isNotId);
     this.setState({
-      // Copies this state.result then overwrites that particularly the hits property
-      //result: Object.assign({}, this.state.result, {hits: updatedHits})
-      
-      // I knew about the plans for ES7 Object spread/rest operator but didn't know people were using it already :o
-      result: { ...this.state.result, hits: updatedHits }
+      results: {
+        ...results,
+        [searchKey]: { hits: updatedHits, page}
+      }
     });
   }
 
@@ -108,8 +128,9 @@ class App extends Component {
   }
 
   render() {
-    const { searchTerm, result } = this.state;
-    const page = (result && result.page) || 0;
+    const { searchTerm, results, searchKey } = this.state;
+    const page = (results && results[searchKey] && results[searchKey].page) || 0;
+    const list = (results && results[searchKey] && results[searchKey].hits) || [];
 
     return (
       <div className="page">
@@ -124,14 +145,12 @@ class App extends Component {
         </div>
         {/* Same as using ternary operator but much more confusing lol
         Like ||, starts with left expression but checks for false (not true)*/}
-        { result &&
           <Table
-            list={result.hits}
+            list={list}
             onDismiss={this.onDismiss}
           />
-        }
           <div className="interactions">
-            <Button onClick={()=> this.fetchSearchTopStories(searchTerm, page + 1)}>
+            <Button onClick={()=> this.fetchSearchTopStories(searchKey, page + 1)}>
               More
             </Button>
           </div>  
