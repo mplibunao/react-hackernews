@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import './App.css';
 
 const DEFAULT_QUERY = 'redux';
@@ -159,6 +160,7 @@ class App extends Component {
   }
 }
 
+
 /*
   You can only use concise body functions if you only have one expression
   In this case, this element tree is considered as one
@@ -181,6 +183,13 @@ const Search = ({
       {children}
     </button>
   </form>
+
+Search.PropTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+};
 
 const Table = ({ list, onDismiss }) =>
 <div className="table">
@@ -210,25 +219,43 @@ const Table = ({ list, onDismiss }) =>
   )}
 </div>
 
+Table.PropTypes = {
+  list: PropTypes.arrayOf(
+    PropTypes.shape({
+      objectID: PropTypes.string.isRequired,
+      author: PropTypes.string,
+      url: PropTypes.string,
+      num_comments: PropTypes.number,
+      points: PropTypes.number,
+    })
+  ).isRequired,
+  onDismiss: PropTypes.func.isRequired,
+};
 
-class Button extends Component {
-  render(){
-    const {
-      onClick,
-      className = '',
-      children,
-    } = this.props;
 
-    return (
-      <button
-        onClick={onClick}
-        className={className}
-        type="button"
-      >
-        {children}
-      </button>
-    );
-  }
-}
+const Button = ({onClick, className, children})=>
+  <button
+    onClick={onClick}
+    className={className}
+    type="button"
+  >
+    {children}
+  </button>
+
+Button.PropTypes = {
+  onClick: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired,
+};
+
+Button.defaultProps = {
+  className: '',
+};
 
 export default App;
+
+export {
+  Button,
+  Search,
+  Table,
+};
