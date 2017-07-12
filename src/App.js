@@ -172,11 +172,6 @@ class App extends Component {
 */
 class Search extends Component{
 
-  // Focus on the search input box upon initial rendering
-  componentDidMount(){
-    this.input.focus();
-  }
-
   render() {
     const {
       value,
@@ -192,7 +187,6 @@ class Search extends Component{
           onChange={onChange}
           // set the value so the element doesn't handle its own state (uncontrolled components)
           value={value}
-          ref={(node) => {this.input = node;}}
         />
         <button type="submit">
           {children}
@@ -279,4 +273,5 @@ export {
   Button,
   Search,
   Table,
+  Loading,
 };
