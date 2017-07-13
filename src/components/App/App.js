@@ -194,4 +194,4 @@ ButtonWithLoading.PropTypes = {
 
 export default App;
 
-export { ButtonWithLoading };
+export { withLoading, ButtonWithLoading  };
