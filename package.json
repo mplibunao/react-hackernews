@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "classnames": "^2.2.5",
     "font-awesome": "^4.7.0",
     "lodash": "^4.17.4",
     "prop-types": "^15.5.10",
