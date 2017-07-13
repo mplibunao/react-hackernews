@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { SORTS } from './helpers';
+import { SORTS, updateSortState, caretClass } from './helpers';
 import Sort from '../Sort/';
 import Button from '../Button/';
 
@@ -20,12 +20,14 @@ class Table extends Component {
   /**
    * onSort
    * @param {String} sortKey - Category used in sorting results
+   * Passes a higher order function to setState which updates the state
    * When you change sort categories, the sortKey === sortKey will automatically return false thus sort normally
    * When it is the same you just flip the previous sortOrder (until you change categories)
    */
   onSort(sortKey){
-    const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse;
-    this.setState({ sortKey, isSortReverse });
+    this.setState(updateSortState(sortKey));
+    //const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse;
+    //this.setState({ sortKey, isSortReverse });
   }
 
   render(){
@@ -35,6 +37,7 @@ class Table extends Component {
 
     const sortedList = SORTS[sortKey](list);
     const reverseSortedList = isSortReverse ? sortedList.reverse() : sortedList;
+    const sortClass = caretClass(isSortReverse);
 
     return (
       <div className="table">
@@ -46,7 +49,7 @@ class Table extends Component {
               onSort={this.onSort}
               activeSortKey={sortKey}
             >
-              Title
+              Title <i className={sortClass}></i>
             </Sort>
           </span>
           <span style={{ width: '30%' }}>
@@ -55,7 +58,7 @@ class Table extends Component {
               onSort={this.onSort}
               activeSortKey={sortKey}
             >
-              Author
+              Author <i className={sortClass}></i>
             </Sort>
           </span>
           <span style={{ width: '10%' }}>
@@ -64,7 +67,7 @@ class Table extends Component {
               onSort={this.onSort}
               activeSortKey={sortKey}
             >
-              Comments
+              Comments <i className={sortClass}></i>
             </Sort>
           </span>
           <span style={{ width: '10%' }}>
@@ -73,7 +76,7 @@ class Table extends Component {
               onSort={this.onSort}
               activeSortKey={sortKey}
             >
-              Points
+              Points <i className={sortClass}></i>
             </Sort>
           </span>
           <span style={{ width: '10%'}}>

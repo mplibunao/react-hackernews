@@ -8,3 +8,14 @@ export const SORTS = {
   COMMENTS: list => sortBy(list, 'num_comments').reverse(),
   POINTS: list => sortBy(list, 'points').reverse(),
 };
+
+export const updateSortState = (newSortKey) => (prevState) => {
+  const { sortKey, isSortReverse } = prevState;
+  const newSortOrder = sortKey === newSortKey && !isSortReverse;
+  return {
+    sortKey: newSortKey,
+    isSortReverse: newSortOrder
+  };
+};
+
+export const caretClass = isSortReverse => isSortReverse ? 'fa fa-caret-up' : 'fa fa-caret-down';

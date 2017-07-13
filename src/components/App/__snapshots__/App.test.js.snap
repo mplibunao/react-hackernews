@@ -42,7 +42,10 @@ exports[`App snapshots 1`] = `
           onClick={[Function]}
           type="button"
         >
-          Title
+          Title 
+          <i
+            className="fa fa-caret-down"
+          />
         </button>
       </span>
       <span
@@ -57,7 +60,10 @@ exports[`App snapshots 1`] = `
           onClick={[Function]}
           type="button"
         >
-          Author
+          Author 
+          <i
+            className="fa fa-caret-down"
+          />
         </button>
       </span>
       <span
@@ -72,7 +78,10 @@ exports[`App snapshots 1`] = `
           onClick={[Function]}
           type="button"
         >
-          Comments
+          Comments 
+          <i
+            className="fa fa-caret-down"
+          />
         </button>
       </span>
       <span
@@ -87,7 +96,10 @@ exports[`App snapshots 1`] = `
           onClick={[Function]}
           type="button"
         >
-          Points
+          Points 
+          <i
+            className="fa fa-caret-down"
+          />
         </button>
       </span>
       <span
