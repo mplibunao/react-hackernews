@@ -29,7 +29,25 @@ const SORTS = {
   POINTS: list => sortBy(list, 'points').reverse(),
 };
 
+const updateSearchTopStoriesState = (hits, page) => (prevState) => {
+  // get values from prevState instead of this.state
+  const { searchKey, results } = prevState;
+  // && acts as a gate to stop result from accessing non-existent searchKey index
+  const oldHits = results && results[searchKey]
+    ? results[searchKey].hits
+    : [];
+  const updatedHits = [...oldHits, ...hits];
 
+  // return value is the new state we're setting
+  return {
+    results: {
+      ...results,
+      // concat at the end of the map the latest results
+      [searchKey]: { hits: updatedHits, page}
+    },
+    isLoading: false,
+  };
+};
 
 //const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
 
@@ -100,20 +118,8 @@ class App extends Component {
 
   // Concatenate recently fetched hits with previous hits
   setSearchTopStories({hits, page}){
-    const { searchKey, results } = this.state;
-    // && acts as a gate to stop result from accessing non-existent searchKey index
-    const oldHits = results && results[searchKey]
-      ? results[searchKey].hits
-      : [];
-    const updatedHits = [...oldHits, ...hits];
-    this.setState({
-      results: {
-        ...results,
-        // concat at the end of the map the latest results
-        [searchKey]: { hits: updatedHits, page}
-      },
-      isLoading: false,
-    });
+    // pass a higher order function which returns a callback responsible for altering the state 'safely'
+    this.setState(updateSearchTopStoriesState(hits, page))
   }
 
   fetchSearchTopStories(searchTerm, page){
