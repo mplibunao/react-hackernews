@@ -5,12 +5,19 @@ import './App.css';
 const DEFAULT_QUERY = 'redux';
 const DEFAULT_PAGE = 0;
 const DEFAULT_HPP = '20';
+//const DEFAULT_TAGS = 'story';
+const DEFAULT_TAGS = 'story';
 
 const PATH_BASE = 'https://hn.algolia.com/api/v1';
-const PATH_SEARCH = '/search';
+const PATH_SEARCH = '/search_by_date';
 const PARAM_SEARCH = 'query=';
+const TAG_SEARCH = 'tags=';
 const PARAM_PAGE = 'page=';
 const PARAM_HPP = 'hitsPerPage=';
+
+// Query for comments of a particular story
+// https://hn.algolia.com/api/v1/search_by_date?tags=comment,story_14743596&page=0&hitsPerPage=20
+// story_xxxx = `story_${hits.objectID}`
 
 //const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
 
@@ -99,8 +106,7 @@ class App extends Component {
 
   fetchSearchTopStories(searchTerm, page){
     this.setState({ isLoading: true});
-
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${TAG_SEARCH}${DEFAULT_TAGS}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(response => response.json())
       .then(result => this.setSearchTopStories(result))
       .catch(e => e);
@@ -153,11 +159,11 @@ class App extends Component {
             onDismiss={this.onDismiss}
           />
           <div className="interactions">
-            { isLoading ? <Loading /> :
-            <Button onClick={()=> this.fetchSearchTopStories(searchKey, page + 1)}>
+            <ButtonWithLoading
+              isLoading={isLoading}
+              onClick={()=> this.fetchSearchTopStories(searchKey, page+1)}>
               More
-            </Button>
-            }
+            </ButtonWithLoading>
           </div>  
       </div>
     );
@@ -264,8 +270,20 @@ Button.defaultProps = {
   className: '',
 };
 
+// Loading component
 const Loading = ()=>
   <i className="fa fa-spinner fa-spin"></i>
+
+// Higher Order Component returning a functional stateless component
+const withLoading = (Component) => ({ isLoading, ...rest }) =>
+  isLoading ? <Loading /> : <Component {...rest} />
+
+
+/**
+ * Store the returned functional component ({ isLoading, ...rest }) in variable
+ * which has closure to Component argument (Button)
+ */
+const ButtonWithLoading = withLoading(Button);
 
 export default App;
 
