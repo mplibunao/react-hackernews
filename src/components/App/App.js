@@ -22,8 +22,29 @@ import {
   PARAM_HPP,
 } from '../../constants/';
 
-
 //const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
+
+/**
+ * withLoading
+ * @param {Component} Component
+ * Higher Order Component that returns a functional stateless component
+ * Inner functional component breaksdown props into two parts: One for conditional conditional rendering, one for props
+ * Depending on isLoading value, either renders Loading Component or Component passed in the outer function (closure)
+ */
+const withLoading = (Component) => ({ isLoading, ...rest }) =>
+  isLoading ? <Loading /> : <Component {...rest} />
+
+/**
+ * ButtonWithLoading
+ * Store the returned functional component ({ isLoading, ...rest }) in variable
+ * which has closure to Component argument (Button)
+ */
+const ButtonWithLoading = withLoading(Button);
+
+ButtonWithLoading.PropTypes = {
+  isLoading: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+}
 
 class App extends Component {
   constructor(props){
@@ -77,7 +98,8 @@ class App extends Component {
   // Concatenate recently fetched hits with previous hits
   setSearchTopStories({hits, page}){
     // pass a higher order function which returns a callback responsible for altering the state 'safely'
-    this.setState(updateSearchTopStoriesState(hits, page))
+    this.setState(updateSearchTopStoriesState(hits, page));
+    console.log(this.state);
   }
 
   fetchSearchTopStories(searchTerm, page){
@@ -144,31 +166,6 @@ class App extends Component {
     );
   }
 }
-
-/**
- * withLoading
- * @param {Component} Component
- * Higher Order Component that returns a functional stateless component
- * Inner functional component breaksdown props into two parts: One for conditional conditional rendering, one for props
- * Depending on isLoading value, either renders Loading Component or Component passed in the outer function (closure)
- */
-const withLoading = (Component) => ({ isLoading, ...rest }) =>
-  isLoading ? <Loading /> : <Component {...rest} />
-
-
-/**
- * ButtonWithLoading
- * Store the returned functional component ({ isLoading, ...rest }) in variable
- * which has closure to Component argument (Button)
- */
-const ButtonWithLoading = withLoading(Button);
-
-ButtonWithLoading.PropTypes = {
-  isLoading: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
-}
-
-
 
 export default App;
 

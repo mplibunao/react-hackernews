@@ -5,6 +5,10 @@ import { SORTS, updateSortState, caretClass } from './helpers';
 import Sort from '../Sort/';
 import Button from '../Button/';
 
+
+
+
+
 class Table extends Component {
   constructor(props){
     super(props);
@@ -12,6 +16,7 @@ class Table extends Component {
     this.state = {
       sortKey: 'NONE',
       isSortReverse: false,
+
     };
 
     this.onSort = this.onSort.bind(this);
@@ -52,7 +57,7 @@ class Table extends Component {
               Title <i className={sortClass}></i>
             </Sort>
           </span>
-          <span style={{ width: '30%' }}>
+          <span style={{ width: '15%' }}>
             <Sort
               sortKey={'AUTHOR'}
               onSort={this.onSort}
@@ -61,13 +66,13 @@ class Table extends Component {
               Author <i className={sortClass}></i>
             </Sort>
           </span>
-          <span style={{ width: '10%' }}>
+          <span style={{ width: '15%' }}>
             <Sort
               sortKey={'COMMENTS'}
               onSort={this.onSort}
               activeSortKey={sortKey}
             >
-              Comments <i className={sortClass}></i>
+              Comment Num <i className={sortClass}></i>
             </Sort>
           </span>
           <span style={{ width: '10%' }}>
@@ -80,34 +85,49 @@ class Table extends Component {
             </Sort>
           </span>
           <span style={{ width: '10%'}}>
+            Comments
+          </span>
+          <span style={{ width: '10%'}}>
             Archive
           </span>
         </div>
 
         {/** Table Body **/}
         { reverseSortedList.map( item =>
-          <div key={item.objectID} className="table-row">
-            <span style={{ width: '40%' }}>
-              <a href={item.url}>{item.title}</a>
-            </span>
-            <span style={{ width: '30%' }}>
-              {item.author}
-            </span>
-            <span style={{ width: '10%' }}>
-              {item.num_comments}
-            </span>
-            <span style={{ width: '10%' }}>
-              {item.points}
-            </span>
-            <span style={{ width: '10%' }}>
-              <Button
-                onClick={()=> onDismiss(item.objectID)}
-                className="button-inline"
+          <div key={item.objectID}>
+            <div className="table-row">
+              <span style={{ width: '40%' }}>
+                <a href={item.url}>{item.title}</a>
+              </span>
+              <span style={{ width: '15%' }}>
+                {item.author}
+              </span>
+              <span style={{ width: '15%' }}>
+                {item.num_comments}
+              </span>
+              <span style={{ width: '10%' }}>
+                {item.points}
+              </span>
+              <span style={{ width: '10%' }}>
+                <Button
+                  className="button-inline"
                 >
-                Dismiss
-              </Button>
-            </span>
-          </div>
+                  Show
+                </Button>
+              </span>
+              <span style={{ width: '10%' }}>
+                <Button
+                  onClick={()=> onDismiss(item.objectID)}
+                  className="button-inline"
+                  >
+                  Dismiss
+                </Button>
+              </span>
+            </div>
+            <div className={{width: '100%'}}>
+              <span className={{width: '100%'}}>Sup</span>
+            </div>
+          </div> 
         )}
       </div>
     );
