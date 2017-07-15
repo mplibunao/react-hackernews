@@ -71,6 +71,8 @@ class App extends Component {
     this.onDismiss = this.onDismiss.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
+    this.showComment = this.showComment.bind(this);
+    this.hideComment =  this.hideComment.bind(this);
   }
 
   // Make API Request after initial rendering of component
@@ -97,6 +99,7 @@ class App extends Component {
 
   // Concatenate recently fetched hits with previous hits
   setSearchTopStories({hits, page}){
+    console.log('hits: ', hits);
     // pass a higher order function which returns a callback responsible for altering the state 'safely'
     this.setState(updateSearchTopStoriesState(hits, page));
     console.log(this.state);

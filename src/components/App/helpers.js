@@ -4,8 +4,18 @@
  *  This callback function is in charge of altering the state 
  */
 const updateSearchTopStoriesState = (hits, page) => (prevState) => {
+  
+  // Insert new property to hits
+  for(let hit of hits){
+    hit.comments = [];
+    hit.showComment = false;
+  }
+  
+  console.log(hits);
+
   // get values from prevState instead of this.state
   const { searchKey, results } = prevState;
+
   // && acts as a gate to stop result from accessing non-existent searchKey index
   const oldHits = results && results[searchKey]
     ? results[searchKey].hits
