@@ -5,10 +5,6 @@ import { SORTS, updateSortState, caretClass } from './helpers';
 import Sort from '../Sort/';
 import Button from '../Button/';
 
-
-
-
-
 class Table extends Component {
   constructor(props){
     super(props);
@@ -37,7 +33,7 @@ class Table extends Component {
 
   render(){
 
-    const { list, onDismiss } = this.props;
+    const { list, onDismiss, showComment } = this.props;
     const { sortKey, isSortReverse } = this.state;
 
     const sortedList = SORTS[sortKey](list);
@@ -111,6 +107,7 @@ class Table extends Component {
               <span style={{ width: '10%' }}>
                 <Button
                   className="button-inline"
+                  onClick={()=> showComment(item.objectID)}
                 >
                   Show
                 </Button>

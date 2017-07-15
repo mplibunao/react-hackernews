@@ -72,7 +72,7 @@ class App extends Component {
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
     this.showComment = this.showComment.bind(this);
-    this.hideComment =  this.hideComment.bind(this);
+    //this.hideComment =  this.hideComment.bind(this);
   }
 
   // Make API Request after initial rendering of component
@@ -80,6 +80,17 @@ class App extends Component {
     const { searchTerm } = this.state;
     this.setState({searchKey: searchTerm});
     this.fetchSearchTopStories(searchTerm, DEFAULT_PAGE);
+  }
+
+  showComment(objectId){
+    const {results, searchTerm} = this.state;
+    if (results && results[searchTerm]){
+      const hits = results[searchTerm].hits.slice();
+      // Find hit which I pressed the show Comment button
+      hits.map(hit=>{
+        hit.objectId === objectId && hit.comment.length ? !hit.showComment : console.log('setState+fetchComment');
+      });
+    }
   }
 
   needsToSearchTopStories(searchTerm){
@@ -157,11 +168,13 @@ class App extends Component {
           <Table
             list={list}
             onDismiss={this.onDismiss}
+            showComment={this.showComment}
           />
           <div className="interactions">
             <ButtonWithLoading
               isLoading={isLoading}
-              onClick={()=> this.fetchSearchTopStories(searchKey, page+1)}>
+              onClick={()=> this.fetchSearchTopStories(searchKey, page+1)}
+            >
               More
             </ButtonWithLoading>
           </div>  
